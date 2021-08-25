@@ -1,0 +1,42 @@
+
+.iconButton {
+    color: black;
+    box-shadow: none;
+    background: transparent;}
+.iconButton.active, .iconButton:hover{
+    color: theme-color("primary");;
+    background-color: transparent;
+    box-shadow: none; 
+}
+
+.emailData {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    padding: 5px 15px 5px 15px;
+    cursor:  pointer;
+}
+
+.emailData:hover{
+    background-color: #8AC0F6;
+} 
+
+.marginButton{
+    margin-right: 5px;
+}
+
+.fillDiv {
+    height: 80vh;
+}
+
+.envelopeIcon {
+    padding: 10px 0px 0px 10px;
+}
+
+.fillminHeigDiv {
+    min-height: 80vh;
+}
+
+.fixed-content {
+    position:fixed;
+    overflow-y:scroll;
+    overflow-x:hidden;
+}

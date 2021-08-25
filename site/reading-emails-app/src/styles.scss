@@ -1,0 +1,21 @@
+@import 'customize-bootstrap.scss';
+@import '../node_modules/bootstrap/scss/bootstrap';
+@import "~bootstrap-icons/font/bootstrap-icons.css";
+
+ 
+.scrollable{
+    overflow-y: scroll;
+}
+
+.scrollableH{
+    overflow-x: scroll;
+}
+
+.full-width-div {
+    position: absolute;
+    width: 100%;
+    left: 0;
+}
+.emailDatBg {
+    background-color: #F6F6F6;
+}

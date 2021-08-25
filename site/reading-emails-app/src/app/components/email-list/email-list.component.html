@@ -1,0 +1,125 @@
+
+<div class="card mb-2">
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+      <div class="p-1">
+        <h6 class="text-muted">Configuration</h6>
+      </div>
+      <div class="p-1">
+        <button class="btn iconButton" type="button" 
+          data-toggle="collapse" data-target="#configurationForm" aria-expanded="false" aria-controls="configurationForm">
+          <i class="bi" (click)="showConfiguration = !showConfiguration"
+            [class]="{ 'bi-chevron-up': showConfiguration, 'bi-chevron-down': !showConfiguration }" ></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="collapse show" id="configurationForm">
+      
+        <form [formGroup]="mailConfigurationForm" (ngSubmit)="onSubmit()">
+          <div class="row">
+              <div class="col-md-6">                
+                  <label for="serverTypeInput" class="form-label">Server type</label>
+                  <select class="form-select" id="serverTypeInput" 
+                    formControlName="serverType" [ngClass]="{ 'is-invalid': submitted && f.serverType.errors }">
+                      <option *ngFor="let serverType of serverTypes" value="{{serverType}}">{{serverType}}</option>
+                  </select>
+                
+                  <label for="serverInput" class="form-label">Server</label>
+                  <input type="text" class="form-control" id="serverInput" 
+                    formControlName="server" [ngClass]="{ 'is-invalid': submitted && f.server.errors }">
+            
+                  <label for="portInput" class="form-label">Port</label>
+                  <input type="text" class="form-control" id="portInput" 
+                    formControlName="port" [ngClass]="{ 'is-invalid': submitted && f.port.errors }">                
+              </div>
+              <div class="col-md-6">
+                <label for="encryptionInput" class="form-label">Encryption</label>
+                <select class="form-select"  id="encryptionInput"
+                  formControlName="encryption" [ngClass]="{ 'is-invalid': submitted && f.encryption.errors }">
+                    <option *ngFor="let encryp of encryptionList" value="{{encryp.id}}">{{encryp.text}}</option>
+                </select>
+
+                <label for="usernameInput" class="form-label">Username</label>
+                <input type="email" class="form-control" id="usernameInput" 
+                  formControlName="username" [ngClass]="{ 'is-invalid': submitted && f.username.errors }">
+              
+                <label for="passwordInput" class="form-label">Password</label>
+                <input type="password" class="form-control" id="passwordInput" 
+                  formControlName="password" [ngClass]="{ 'is-invalid': submitted && f.password.errors }">                
+              </div>
+            </div>
+         
+            <div class="row">
+              <div class="col-md-8"> 
+                <div class="card-body text-start" *ngIf="errorMessages.length > 0">
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <ul>
+                      <li *ngFor="let message of errorMessages">{{message}}</li>
+                    </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" (click)="removeAlertError()"></button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4"> 
+                <div class="card-body text-end" >
+                  <button type="submit" class="btn btn-primary marginButton">Start</button>
+                  <button type="button" class="btn btn-secondary" (click)="onReset()">Reset</button>
+                </div>
+              </div>
+            </div>
+            
+        </form>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="col-md-6 mb-3">
+      <div class="card fillDiv scrollable">
+        <div *ngFor="let email of emailList" (click)="changeSelectedEmail(email)" class="emailData emailDatBg"
+            [ngClass]="{ 'bg-primary': selectedEmail && email.id == selectedEmail.id }">
+
+          <div class="row">
+              <div class="col-md-1"> 
+                <svg *ngIf="!email.extraInfo" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file envelopeIcon" viewBox="0 0 16 16">
+                  <path d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H4zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1z"/>
+                </svg>
+                <svg *ngIf="email.extraInfo && email.extraInfo.isRead" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-envelope-open envelopeIcon" viewBox="0 0 16 16">
+                  <path d="M8.47 1.318a1 1 0 0 0-.94 0l-6 3.2A1 1 0 0 0 1 5.4v.818l5.724 3.465L8 8.917l1.276.766L15 6.218V5.4a1 1 0 0 0-.53-.882l-6-3.2zM15 7.388l-4.754 2.877L15 13.117v-5.73zm-.035 6.874L8 10.083l-6.965 4.18A1 1 0 0 0 2 15h12a1 1 0 0 0 .965-.738zM1 13.117l4.754-2.852L1 7.387v5.73zM7.059.435a2 2 0 0 1 1.882 0l6 3.2A2 2 0 0 1 16 5.4V14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5.4a2 2 0 0 1 1.059-1.765l6-3.2z"/>
+                </svg>
+                <svg *ngIf="email.extraInfo && !email.extraInfo.isRead" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-envelope envelopeIcon" viewBox="0 0 16 16">
+                  <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z"/>
+                </svg>
+              </div>
+              <div class="col-md-11"> 
+                <div class="row">
+                  <div class="col-md-10"> 
+                    <small>{{email.from | emailAddresses}}</small>
+                  </div>
+                  <div class="col-md-2 text-end"> 
+                    <small>{{email.date | date:'shortDate'}}</small>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col"> 
+                    {{email.subject}}
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        
+        <app-loader *ngIf="isLoadingEmails"></app-loader>
+    </div>
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <div class="card fillminHeigDiv">
+
+      <app-email-detail [emailData]="selectedEmail" [serveConfig]="serveConfig"></app-email-detail>
+    </div>
+  </div>
+
+</div>
