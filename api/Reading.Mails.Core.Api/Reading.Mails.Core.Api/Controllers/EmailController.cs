@@ -1,9 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Reading.Mails.Core.Api.Api.Model.Request;
 using Reading.Mails.Core.Api.Application.Contracts;
 using Reading.Mails.Core.Api.Application.Exceptions;
 using Reading.Mails.Core.Api.Domain.Model;
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Reading.Mails.Core.Api.Controllers
@@ -21,12 +26,14 @@ namespace Reading.Mails.Core.Api.Controllers
 
         [HttpGet, Route("GetEmails", Name = "GetEmails")]
         public async Task<IActionResult> GetEmails(string serverType, string server, 
-            int port, string encryption, string username, string password, int index, int items)
+            int port, string encryption, int index, int items, [FromHeader] string authorization)
         {
             try
             {
+                var credentials = GetCredentialsFromHeader(authorization);
+
                 var emailData = new EmailListPetition(serverType, server, port,
-                    encryption, username, password, index, items);
+                    encryption, credentials.Username, credentials.Password, index, items);
 
                 if (!emailData.IsValidData())
                     return this.BadRequest(emailData.LogErrors);
@@ -44,14 +51,16 @@ namespace Reading.Mails.Core.Api.Controllers
             }
         }
 
+
         [HttpGet, Route("GetEmaillBody", Name = "GetEmaillBody")]
         public async Task<IActionResult> GetEmaillBody(string serverType, 
-            string server, int port, string encryption, string username, string password, int emailId)
+            string server, int port, string encryption, int emailId, [FromHeader] string authorization)
         {
             try
             {
+                var credentials = GetCredentialsFromHeader(authorization);
                 var emailData = new EmailBodyPetition(serverType, server, port, 
-                    encryption, username, password, emailId);
+                    encryption, credentials.Username, credentials.Password, emailId);
 
                 if (!emailData.IsValidData())
                     return this.BadRequest(emailData.LogErrors);
@@ -67,6 +76,27 @@ namespace Reading.Mails.Core.Api.Controllers
             {
                 return this.Problem(ex.Message);
             }
+        }
+
+        private static CredentialHeaderRequest GetCredentialsFromHeader(string authorization)
+        {
+            var credentialsRequest = new CredentialHeaderRequest();
+            if (authorization != null)
+            {
+                var authHeaderValue = AuthenticationHeaderValue.Parse(authorization);
+                if (authHeaderValue.Scheme.Equals(AuthenticationSchemes.Basic.ToString(), StringComparison.OrdinalIgnoreCase))
+                {
+                    var credentials = Encoding.UTF8.GetString(Convert.FromBase64String(authHeaderValue.Parameter ?? string.Empty))
+                                        .Split(':');
+                    if (credentials.Length == 2)
+                    {
+                        credentialsRequest.Username = credentials[0];
+                        credentialsRequest.Password = credentials[1];
+                    }
+                }
+            }
+
+            return credentialsRequest;
         }
     }
 }
