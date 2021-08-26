@@ -69,11 +69,7 @@ namespace Reading.Mails.Api.Integration.Test.tests
 
         [Test]
         [TestCase("POP3", 995, "STARTTLS", 0, 10)]
-        //[TestCase("POP3", 234, "SSL_TLS", 0, 10)]
-        //[TestCase("POP3", 110, "SSL_TLS", 0, 10)]
-        //[TestCase("IMAP", 993, "STARTTLS", 0, 10)]
-        //[TestCase("IMAP", 143, "SSL_TLS", 0, 10)]
-        //[TestCase("IMAP", 993, "UNENCRYPTED", 0, 10)]
+        [TestCase("IMAP", 123, "STARTTLS", 0, 10)]
         public void GetEmailsKO(string serverType, int port, string encryption, int index, int items)
         {
             var response = GetEmailsCall(serverType, port, encryption, index, items);

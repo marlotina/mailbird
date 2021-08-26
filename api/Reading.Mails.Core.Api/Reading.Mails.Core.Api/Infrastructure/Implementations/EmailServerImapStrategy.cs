@@ -82,6 +82,7 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
         private static ImapClient GetClientConnected(EmailProviderConfig emailConfiguration)
         {
             var client = new ImapClient();
+            client.Timeout = 15000;
             if (emailConfiguration.Encryption.ToEnum<EncryptionTypesEnum>() == EncryptionTypesEnum.STARTTLS)
             {
                 client.Connect(emailConfiguration.Server, emailConfiguration.Port, SecureSocketOptions.StartTlsWhenAvailable);

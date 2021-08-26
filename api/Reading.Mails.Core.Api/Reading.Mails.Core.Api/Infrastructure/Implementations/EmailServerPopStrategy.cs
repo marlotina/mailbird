@@ -91,6 +91,7 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
         private static Pop3Client GetClientConnected(EmailProviderConfig emailConfiguration)
         {
             var client = new Pop3Client();
+            client.Timeout = 15000;
             if (emailConfiguration.Encryption.ToEnum<EncryptionTypesEnum>() == EncryptionTypesEnum.STARTTLS)
             {
                 client.Connect(emailConfiguration.Server, emailConfiguration.Port, SecureSocketOptions.StartTlsWhenAvailable);
