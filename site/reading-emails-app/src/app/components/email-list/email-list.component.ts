@@ -18,6 +18,7 @@ export class EmailListComponent implements OnInit {
   submitted = false;
   isLoadingEmails = false;
   showConfiguration = true;
+  hasEmailSelected = false;
 
   emailList: EmailItem[] = [];
   selectedEmail?: EmailItem;
@@ -65,7 +66,9 @@ export class EmailListComponent implements OnInit {
   changeSelectedEmail(selectedEmail: EmailItem)
   {
     this.selectedEmail = selectedEmail;
+    this.hasEmailSelected = true;
   }
+
 
   async retrieveAllEmails(serveConfig: ServerConfiguration){
     let finish = false;
