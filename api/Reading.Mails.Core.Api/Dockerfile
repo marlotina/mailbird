@@ -3,7 +3,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
@@ -20,9 +19,8 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-RUN groupadd -g 333 appuser && \
-    useradd -r -u 333 -g appuser appuser
 
+RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 USER appuser
 
 ENTRYPOINT ["dotnet", "Reading.Mails.Core.Api.dll"]

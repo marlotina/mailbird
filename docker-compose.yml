@@ -2,23 +2,17 @@ version: "3.6"
 services:
                 
     readingemailapi:
-        container_name: readingemailapi1
+        container_name: readingmailsapi
         ports:
-            - 8000:80
-            - 8001:443
-        environment:
-            - "ASPNETCORE_URLS=https://+;http://+"
-            - Kestrel__Certificates__Default__Path=aspnetapp.pfx
-            - Kestrel__Certificates__Default__Password=marlotinacert        
-        image: readingemailapifinal   
+            - 49180:80
+        image: marlotina/code:api
         restart: on-failure 
         
     readingemailsite:
-        container_name: readingemailsite
+        container_name: readingmailssite
         ports:
-            - 9000:80     
-        image: readingemailsappfinal1      
+            - 5800:80     
+        image: marlotina/code:site
         restart: on-failure
         depends_on:
             - readingemailapi  
-
