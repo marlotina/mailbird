@@ -96,7 +96,7 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
         {
             return new EmailItem
             {
-                Id = (int)message.UniqueId.Id,
+                Id = message.UniqueId.Id.ToString(),
                 To = message.Envelope.To.Mailboxes.Select(x => new AddressItem { Name = x.Name, Email = x.Address }),
                 From = message.Envelope.From.Mailboxes.Select(x => new AddressItem { Name = x.Name, Email = x.Address }),
                 Subject = message.Envelope.Subject,

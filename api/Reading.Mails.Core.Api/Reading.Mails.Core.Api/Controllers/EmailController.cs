@@ -53,7 +53,7 @@ namespace Reading.Mails.Core.Api.Controllers
 
         [HttpGet, Route("GetEmaillBody", Name = "GetEmaillBody")]
         public async Task<IActionResult> GetEmaillBody(string serverType, 
-            string server, int port, string encryption, int emailId, [FromHeader] string authorization)
+            string server, int port, string encryption, string emailId, [FromHeader] string authorization)
         {
             try
             {

@@ -14,7 +14,7 @@ export class EmailDetailPetition {
     encryption!: string;
     username!: string;
     password!: string;
-    emailId!: number
+    emailId!: string
 }
 
 export class EmailsPetition {

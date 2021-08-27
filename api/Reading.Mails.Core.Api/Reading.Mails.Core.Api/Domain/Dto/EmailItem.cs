@@ -5,7 +5,7 @@ namespace Reading.Mails.Core.Api.Domain.Dto
 {
     public class EmailItem
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public IEnumerable<AddressItem> To { get; set; }
         public IEnumerable<AddressItem> From { get; set; }
         public string Subject { get; set; }

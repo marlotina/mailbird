@@ -25,8 +25,7 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
                 try
                 {
                     var uidList = client.GetMessageUids();
-                    var parseUidList = ParseUidList(uidList);
-                    int indexEmail = parseUidList.IndexOf(emailConfiguration.EmailId.ToString());
+                    int indexEmail = uidList.IndexOf(emailConfiguration.EmailId);
 
                     var message = await client.GetMessageAsync(indexEmail);
                     email = this.MapBody(message);
@@ -60,11 +59,10 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
                     var indexList = GenerateEmailsIndexArray(start, end);
                     var messages = await client.GetMessagesAsync(indexList);
                     var uidList = client.GetMessageUids();
-                    var parseUidList = ParseUidList(uidList);
 
                     for (var i=messages.Count-1; i>=0; i--)
                     {
-                        var uid = int.Parse(parseUidList[indexList[i]]);
+                        var uid = uidList[indexList[i]];
                         emailList.List.Add(MapMessage(uid, messages[i]));
                     }
                 }
@@ -79,11 +77,6 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
             }
 
             return emailList;
-        }
-
-        private static List<string> ParseUidList(IEnumerable<string> uidList)
-        { 
-            return uidList.Select(x => x.Split('-').Length > 1 ? x.Split('-')[1]: x.Split('-')[0]).ToList();
         }
 
         private static int[] GenerateEmailsIndexArray(int startIndex, int endIndex)
@@ -109,7 +102,7 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
             return client;
         }
 
-        private static EmailItem MapMessage(int emailId, MimeMessage mimeMessage)
+        private static EmailItem MapMessage(string emailId, MimeMessage mimeMessage)
         {
             return new EmailItem
             {
