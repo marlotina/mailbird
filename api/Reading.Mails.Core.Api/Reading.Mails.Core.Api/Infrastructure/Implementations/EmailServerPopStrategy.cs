@@ -1,5 +1,4 @@
 ﻿using MailKit.Net.Pop3;
-using MailKit.Security;
 using MimeKit;
 using Reading.Mails.Core.Api.Domain.Dto;
 using Reading.Mails.Core.Api.Domain.enumerations;
@@ -8,7 +7,8 @@ using Reading.Mails.Core.Api.Infrastructure.Contracts;
 using Reading.Mails.Core.Api.Infrastructure.Implementations.Base;
 using System.Linq;
 using System.Threading.Tasks;
-using Reading.Mails.Core.Api.Extensions;
+using System.Collections.Generic;
+using Reading.Mails.Core.Api.Infrastructure.Helper;
 
 namespace Reading.Mails.Core.Api.Infrastructure.Implementations
 {
@@ -25,7 +25,8 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
                 try
                 {
                     var uidList = client.GetMessageUids();
-                    int indexEmail = uidList.IndexOf(emailConfiguration.EmailId.ToString());
+                    var parseUidList = ParseUidList(uidList);
+                    int indexEmail = parseUidList.IndexOf(emailConfiguration.EmailId.ToString());
 
                     var message = await client.GetMessageAsync(indexEmail);
                     email = this.MapBody(message);
@@ -59,10 +60,11 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
                     var indexList = GenerateEmailsIndexArray(start, end);
                     var messages = await client.GetMessagesAsync(indexList);
                     var uidList = client.GetMessageUids();
-                    
+                    var parseUidList = ParseUidList(uidList);
+
                     for (var i=messages.Count-1; i>=0; i--)
                     {
-                        var uid = int.Parse(uidList[indexList[i]]);
+                        var uid = int.Parse(parseUidList[indexList[i]]);
                         emailList.List.Add(MapMessage(uid, messages[i]));
                     }
                 }
@@ -79,6 +81,11 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
             return emailList;
         }
 
+        private static List<string> ParseUidList(IEnumerable<string> uidList)
+        { 
+            return uidList.Select(x => x.Split('-').Length > 1 ? x.Split('-')[1]: x.Split('-')[0]).ToList();
+        }
+
         private static int[] GenerateEmailsIndexArray(int startIndex, int endIndex)
         {
             var value = startIndex;
@@ -90,17 +97,13 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
 
         private static Pop3Client GetClientConnected(EmailProviderConfig emailConfiguration)
         {
-            var client = new Pop3Client();
-            client.Timeout = 15000;
-            if (emailConfiguration.Encryption.ToEnum<EncryptionTypesEnum>() == EncryptionTypesEnum.STARTTLS)
+            var client = new Pop3Client
             {
-                client.Connect(emailConfiguration.Server, emailConfiguration.Port, SecureSocketOptions.StartTlsWhenAvailable);
-            }
-            else
-            {
-                client.Connect(emailConfiguration.Server, emailConfiguration.Port, emailConfiguration.IsSsl);
-            }
+                Timeout = 15000
+            };
 
+            var socket = EncryptionSocketMailKitConversor.GetSocketOption(emailConfiguration.Encryption);
+            client.Connect(emailConfiguration.Server, emailConfiguration.Port, socket);
             client.Authenticate(emailConfiguration.Username, emailConfiguration.Password);
 
             return client;

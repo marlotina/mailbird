@@ -1,6 +1,5 @@
 ﻿using MailKit;
 using MailKit.Net.Imap;
-using MailKit.Security;
 using Reading.Mails.Core.Api.Domain.Dto;
 using Reading.Mails.Core.Api.Domain.enumerations;
 using Reading.Mails.Core.Api.Infrastructure.Implementations.Base;
@@ -9,7 +8,7 @@ using System;
 using System.Threading.Tasks;
 using Reading.Mails.Core.Api.Domain.Model;
 using System.Linq;
-using Reading.Mails.Core.Api.Extensions;
+using Reading.Mails.Core.Api.Infrastructure.Helper;
 
 namespace Reading.Mails.Core.Api.Infrastructure.Implementations
 {
@@ -81,18 +80,14 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
 
         private static ImapClient GetClientConnected(EmailProviderConfig emailConfiguration)
         {
-            var client = new ImapClient();
-            client.Timeout = 15000;
-            if (emailConfiguration.Encryption.ToEnum<EncryptionTypesEnum>() == EncryptionTypesEnum.STARTTLS)
+            var client = new ImapClient
             {
-                client.Connect(emailConfiguration.Server, emailConfiguration.Port, SecureSocketOptions.StartTlsWhenAvailable);
-            }
-            else
-            {
-                client.Connect(emailConfiguration.Server, emailConfiguration.Port, emailConfiguration.IsSsl);
-            }
+                Timeout = 15000
+            };
 
-             client.Authenticate(emailConfiguration.Username, emailConfiguration.Password);
+            var socket = EncryptionSocketMailKitConversor.GetSocketOption(emailConfiguration.Encryption);
+            client.Connect(emailConfiguration.Server, emailConfiguration.Port, socket);
+            client.Authenticate(emailConfiguration.Username, emailConfiguration.Password);
 
             return client;
         }

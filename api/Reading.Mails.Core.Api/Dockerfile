@@ -19,4 +19,10 @@ RUN dotnet publish "Reading.Mails.Core.Api.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+RUN groupadd -g 333 appuser && \
+    useradd -r -u 333 -g appuser appuser
+
+USER appuser
+
 ENTRYPOINT ["dotnet", "Reading.Mails.Core.Api.dll"]

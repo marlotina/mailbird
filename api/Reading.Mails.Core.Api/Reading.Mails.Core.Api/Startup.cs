@@ -41,9 +41,10 @@ namespace Reading.Mails.Core.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Reading.Mails.Core.Api v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Reading.Mails.Core.Api v1"));
 
             app.UseHttpsRedirection();
 

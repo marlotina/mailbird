@@ -14,13 +14,6 @@ namespace Reading.Mails.Core.Api.Domain.Model
         public string Encryption { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public bool IsSsl
-        {
-            get 
-            {
-                return this.Encryption.ToEnum<EncryptionTypesEnum>() != EncryptionTypesEnum.UNENCRYPTED;
-            }
-        }
 
         public List<string> LogErrors { get; set; }
 
