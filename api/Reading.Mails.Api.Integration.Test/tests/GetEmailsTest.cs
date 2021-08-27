@@ -102,11 +102,11 @@ namespace Reading.Mails.Api.Integration.Test.tests
             request.AddParameter("server", SeetingsHelper.SERVER);
             request.AddParameter("port", port);
             request.AddParameter("encryption", encryption);
-            request.AddParameter("username", SeetingsHelper.USER_NAME);
-            request.AddParameter("password", SeetingsHelper.USER_PASS);
             request.AddParameter("index", index);
             request.AddParameter("items", items);
 
+            request.AddHeader("authorization", $"Basic {SeetingsHelper.Base64Encode($"{SeetingsHelper.USER_NAME}:{SeetingsHelper.USER_PASS}")}");
+            
             var response = client.Execute<EmailList>(request);
             return response;
         }

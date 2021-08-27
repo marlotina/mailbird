@@ -85,8 +85,9 @@ namespace Reading.Mails.Core.Api.Infrastructure.Implementations
                 Timeout = 15000
             };
 
-            var socket = EncryptionSocketMailKitConversor.GetSocketOption(emailConfiguration.Encryption);
-            client.Connect(emailConfiguration.Server, emailConfiguration.Port, socket);
+            client.Connect(emailConfiguration.Server, emailConfiguration.Port, 
+                EncryptionSocketMailKitConversor.GetSocketOption(emailConfiguration.Encryption));
+
             client.Authenticate(emailConfiguration.Username, emailConfiguration.Password);
 
             return client;
