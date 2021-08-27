@@ -69,7 +69,6 @@ export class EmailListComponent implements OnInit {
     this.hasEmailSelected = true;
   }
 
-
   async retrieveAllEmails(serveConfig: ServerConfiguration){
     let finish = false;
     let index = 0;
@@ -87,19 +86,13 @@ export class EmailListComponent implements OnInit {
               })
               .catch(errorResponse => 
               {
-                if(errorResponse.status == 400) {
-                  for(var i=0; i<errorResponse.error.length;i++){
-                    this.errorMessages.push(errorResponse.error[i]);
-                  }
-                } else {
-                  this.errorMessages.push(errorResponse.error.detail);             
-                }
+                this.manageErrors(errorResponse);
                 finish = true;   
               });
     }
     this.isLoadingEmails = false;
   }
-  
+
   onReset(){
     this.mailConfigurationForm.reset();
     this.submitted = false;
@@ -115,5 +108,18 @@ export class EmailListComponent implements OnInit {
 
   removeAlertError(){
     this.errorMessages = [];
+  }
+  
+  private manageErrors(errorResponse: any) {
+    if (errorResponse.status == 400) {
+      for (var i = 0; i < errorResponse.error.length; i++) {
+        this.errorMessages.push(errorResponse.error[i]);
+      }
+    }
+    else if (errorResponse.status == 0) {
+      this.errorMessages.push(errorResponse.message);
+    } else {
+      this.errorMessages.push(errorResponse.error.detail);
+    }
   }
 }
