@@ -5,14 +5,14 @@ services:
         container_name: readingmailsapi
         ports:
             - 49180:80
-        image: marlotina/code:api
+        image: marlotina/mailappexercise:api
         restart: on-failure 
         
     readingemailsite:
         container_name: readingmailssite
         ports:
             - 5800:80     
-        image: marlotina/code:site
+        image: marlotina/mailappexercise:site
         restart: on-failure
         depends_on:
             - readingemailapi  
