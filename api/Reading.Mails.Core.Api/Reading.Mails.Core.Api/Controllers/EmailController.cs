@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Reading.Mails.Core.Api.Api.Model.Request;
+using Reading.Mails.Core.Api.Api.services;
 using Reading.Mails.Core.Api.Application.Contracts;
 using Reading.Mails.Core.Api.Application.Exceptions;
 using Reading.Mails.Core.Api.Domain.Model;
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Reading.Mails.Core.Api.Controllers
@@ -29,7 +26,7 @@ namespace Reading.Mails.Core.Api.Controllers
         {
             try
             {
-                var credentials = GetCredentialsFromHeader(authorization);
+                var credentials = RequestCredentilsService.GetCredentialsFromHeader(authorization);
 
                 var emailData = new EmailListPetition(serverType, server, port,
                     encryption, credentials.Username, credentials.Password, index, items);
@@ -57,7 +54,7 @@ namespace Reading.Mails.Core.Api.Controllers
         {
             try
             {
-                var credentials = GetCredentialsFromHeader(authorization);
+                var credentials = RequestCredentilsService.GetCredentialsFromHeader(authorization);
                 var emailData = new EmailBodyPetition(serverType, server, port, 
                     encryption, credentials.Username, credentials.Password, emailId);
 
@@ -75,27 +72,6 @@ namespace Reading.Mails.Core.Api.Controllers
             {
                 return this.Problem(ex.Message);
             }
-        }
-
-        private static CredentialHeaderRequest GetCredentialsFromHeader(string authorization)
-        {
-            var credentialsRequest = new CredentialHeaderRequest();
-            if (authorization != null)
-            {
-                var authHeaderValue = AuthenticationHeaderValue.Parse(authorization);
-                if (authHeaderValue.Scheme.Equals(AuthenticationSchemes.Basic.ToString(), StringComparison.OrdinalIgnoreCase))
-                {
-                    var credentials = Encoding.UTF8.GetString(Convert.FromBase64String(authHeaderValue.Parameter ?? string.Empty))
-                                        .Split(':');
-                    if (credentials.Length == 2)
-                    {
-                        credentialsRequest.Username = credentials[0];
-                        credentialsRequest.Password = credentials[1];
-                    }
-                }
-            }
-
-            return credentialsRequest;
         }
     }
 }
